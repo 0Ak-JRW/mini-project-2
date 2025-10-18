@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
 
 export const cardDetails = [
   {
@@ -88,8 +89,30 @@ export default function CardItem() {
             <p className="text-md text-yellow-500">Save {card.saveprice}</p>
           </div>
           <hr className="border-t border-amber-200 mb-6" />
-          <div className="text-sm text-white mb-2 text-end">
-            Remaining: {card.remaining}
+          <div className="flex justify-end mb-2">
+            <button
+              type="button"
+              aria-pressed="false"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const btn = e.currentTarget;
+                const pressed = btn.getAttribute("aria-pressed") === "true";
+                btn.setAttribute("aria-pressed", String(!pressed));
+              }}
+              className="group p-2 rounded-full focus:outline-none"
+              aria-label="Favorite"
+              title="Favorite"
+            >
+              <FaStar
+                className="
+                w-5 h-5 transition-colors
+                stroke-yellow-300 stroke-20
+                group-aria-[pressed=false]:text-transparent
+                group-aria-[pressed=true]:text-yellow-300
+              "
+              />
+            </button>
           </div>
         </Link>
       ))}
