@@ -84,7 +84,7 @@ export default function Navbar() {
               aria-expanded={isOpen}
             >
               <img
-                src="/src/images/profile.png"
+                src="/images/profile.png"
                 alt="Profile"
                 className="h-10 w-10 rounded-full object-cover"
               />

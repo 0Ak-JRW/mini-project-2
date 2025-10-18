@@ -5,7 +5,7 @@ export const cardDetails = [
   {
     id: 1,
     title: "Card Title 1",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -15,7 +15,7 @@ export const cardDetails = [
   {
     id: 2,
     title: "Card Title 2",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -25,7 +25,7 @@ export const cardDetails = [
   {
     id: 3,
     title: "Card Title 3",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -35,7 +35,7 @@ export const cardDetails = [
   {
     id: 4,
     title: "Card Title 4",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -45,7 +45,7 @@ export const cardDetails = [
   {
     id: 5,
     title: "Card Title 5",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -55,7 +55,7 @@ export const cardDetails = [
   {
     id: 6,
     title: "Card Title 6",
-    image: "/src/images/Mockup.jpg",
+    image: "/images/Mockup.jpg",
     description: "Card description goes here.",
     price: "10.00 Bath",
     normalprice: "15.00 Bath",
@@ -77,7 +77,7 @@ export default function CardItem() {
           <img
             src={card.image}
             alt={card.title}
-            className="w-full h-40 object-cover mb-4"
+            className="w-full h-40 object-cover mb-4 rounded-xl"
           />
           <p className="text-white mb-4">{card.description}</p>
           <div className="mb-4 flex flex-col items-center">
