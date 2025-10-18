@@ -7,6 +7,7 @@ import Home from "./routes/Home.tsx"
 import About from "./routes/About.tsx"
 import Details from "./routes/Details.tsx";
 import Favorite from "./routes/Favorite.tsx";
+import Wheel from "./routes/Wheel.tsx";
 
 const router = createBrowserRouter([
   {
@@ -17,8 +18,8 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
       { path: "product/:id", element: <Details /> },
-      { path: "Favorite", element: <Favorite /> }, // เส้นทางสำหรับหน้าหนังโปรด
-      // { path: "about", element: <About /> }, // เส้นทางสำหรับหน้าเกี่ยวกับ
+      { path: "Favorite", element: <Favorite /> },
+      { path: "wheel", element: <Wheel /> },
     ],
   },
 ]);

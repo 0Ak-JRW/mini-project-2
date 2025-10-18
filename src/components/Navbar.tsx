@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 // src/components/Navbar.tsx
@@ -6,12 +6,12 @@ import { Link, NavLink } from "react-router-dom";
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/favorite", label: "Favorite" },
+  { to: "/wheel", label: "Wheel" },
   { to: "/about", label: "About" },
 ];
 
 const dropdownItems = [
-  { to: "/cart", label: "Cart" },
-  { to: "/profile", label: "Profile" },
+  { to: "/favorite", label: "Favorite" },
 ];
 
 export default function Navbar() {
