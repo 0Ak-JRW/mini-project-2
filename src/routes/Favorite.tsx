@@ -16,38 +16,45 @@ export default function Favorite() {
 
     return (
         <>
-            <h1 className="text-3xl font-semibold text-center">Favorite Applications</h1>
-            <div className="pt-8">
-                <div className="flex justify-between space-x-4">
-                    {filterBar.map((item) => (
-                        <button
-                            key={item.to}
-                            className="px-4 py-1.5 w-44 text-md text-white border border-white rounded-lg hover:bg-gray-100 cursor-pointer"
-                        >
-                            {item.label}
-                        </button>
-                    ))}
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-[#00fff2] to-blue-500 bg-clip-text text-transparent">
+                    Favorite Applications
+                </h1>
+
+                {/* Filter Bar */}
+                <div className="mb-8">
+                    <div className="flex flex-wrap gap-3 justify-center">
+                        {filterBar.map((item) => (
+                            <button
+                                key={item.to}
+                                className="px-6 py-2.5 min-w-[120px] text-sm font-medium text-white bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded-xl hover:from-[#00fff2] hover:to-blue-500 hover:border-[#00fff2] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-[#00fff2]/50"
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="flex flex-col items-start justify-self-center pt-6 w-full space-y-3">
-                    <h1 className="text-lg font-semibold">Search Application</h1>
-                    <form className="relative w-full">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                            <GoSearch size={18} />
+                {/* Search Bar */}
+                <div className="max-w-2xl mx-auto mb-10">
+                    <h2 className="text-xl font-semibold mb-4 text-gray-200">Search Application</h2>
+                    <form className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <GoSearch size={20} />
                         </span>
-
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search..."
-                            className="rounded-lg w-full bg-transparent border border-white py-2 pl-10 pr-4 text-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00fff2]"
+                            placeholder="Search your favorite apps..."
+                            className="rounded-xl w-full bg-gray-900/50 border border-gray-700 py-3.5 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00fff2] focus:border-transparent backdrop-blur-sm transition-all duration-300 shadow-lg"
                         />
                     </form>
                 </div>
 
-                <div className="pt-8">
-                    <CardItem />
+                {/* Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* <CardItem  /> */}
                 </div>
             </div>
         </>
