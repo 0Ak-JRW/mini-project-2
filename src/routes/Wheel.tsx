@@ -163,7 +163,7 @@ export default function CaseSpinner() {
   };
 
   return (
-    <div className="min-h-screen w-full from-gray-900 via-purple-900 to-gray-900 flex flex-col items-center justify-center py-10 px-4">
+    <div className="min-h-screen w-full from-gray-900 via-purple-900 to-gray-900 flex flex-col items-center justify-center py-10 px-4 ">
       {/* Header */}
       <div className="mb-8 text-center">
       <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 mb-2">
