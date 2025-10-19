@@ -1,5 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cardDetails } from "../util/cardDetails";
+import axios from "axios";
+
+interface Item {
+  type_code: number;
+  app: string;
+  msg_groups: string;
+  name_groups: string;
+  groups: string;
+  name: string;
+  img: string;
+  img_cover: string;
+  img_icon: string;
+  msg: string;
+  price: number;
+  price_agent: number;
+  exp: number;
+  amount: number;
+}
+
+
 
 // (เราใช้ typeof cardDetails[0] เพื่อบอก TypeScript ว่า
 // state นี้จะมีหน้าตาเหมือน object 1 ชิ้นใน array)
@@ -20,11 +40,35 @@ const WINNER_INDEX = 39;
 
 export default function CaseSpinner() {
   const [isSpinning, setIsSpinning] = useState(false);
-  const [winner, setWinner] = useState<CardType | null>(null);
+  const [winner, setWinner] = useState<Item | null>(null);
+
+  const [itemList, setItemList] = useState<Item[]>([]);
+
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
+          params: {
+            action: 'getpack',
+          },
+          headers: {
+            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+          },
+        });
+        // setReelItems(response.data);
+        setItemList(response.data);
+        // console.log(response);
+      };
+      fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, []);
 
   // State สำหรับเก็บ "แถบหมุน" ที่เราสร้างขึ้น
-  const [reelItems, setReelItems] = useState<CardType[]>([]);
-  
+  const [reelItems, setReelItems] = useState<Item[]>([]);
+
   // --- [แก้ไขข้อ 1] ---
   // เปลี่ยนจาก useState(0) เป็น state object ที่เก็บ style
   const [spinStyle, setSpinStyle] = useState<React.CSSProperties>({
@@ -35,14 +79,15 @@ export default function CaseSpinner() {
   // --- 2. ฟังก์ชัน Helper --- (เหมือนเดิม)
 
   // 2.1 สุ่มไอเทม 1 ชิ้นจาก Pool (6 ชิ้น)
-  const pickWinner = (): CardType => {
-    const randomIndex = Math.floor(Math.random() * cardDetails.length);
-    return cardDetails[randomIndex];
+  const pickWinner = (): Item => {
+    const randomIndex = Math.floor(Math.random() * itemList.length);
+
+    return itemList[randomIndex];
   };
 
   // 2.2 สร้างแถบหมุน "ปลอม"
-  const generateReel = (winner: CardType): CardType[] => {
-    const reel: CardType[] = [];
+  const generateReel = (winner: Item): Item[] => {
+    const reel: Item[] = [];
     for (let i = 0; i < REEL_LENGTH; i++) {
       if (i === WINNER_INDEX) {
         // "วางยา" ผู้ชนะไว้ที่ตำแหน่ง WINNER_INDEX
@@ -64,9 +109,9 @@ export default function CaseSpinner() {
 
     // 3.1 (Reset) 
     // สั่ง "วาร์ป" กลับไปที่ 0 ทันที (เพราะ transition: 'none')
-    setSpinStyle({ 
-      transition: 'none', 
-      transform: 'translateX(0px)' 
+    setSpinStyle({
+      transition: 'none',
+      transform: 'translateX(0px)'
     });
 
     // 3.2 สุ่มผู้ชนะ "ตัวจริง"
@@ -78,10 +123,10 @@ export default function CaseSpinner() {
 
     // 3.4 คำนวณตำแหน่งที่จะหยุด
     // (ความกว้าง Container / 2) - (ตำแหน่งกลางของ Winner Item)
-    
+
     // (max-w-3xl คือ 768px)
     const containerCenter = 768 / 2; // (อัปเดตจาก 640 เป็น 768)
-    
+
     // ตำแหน่งขอบซ้ายของ Winner
     const winnerLeftEdge = WINNER_INDEX * TOTAL_ITEM_WIDTH;
     // ตำแหน่งกึ่งกลางของ Winner
@@ -107,7 +152,7 @@ export default function CaseSpinner() {
     setTimeout(() => {
       setIsSpinning(false);
       setWinner(newWinner); // แสดงผลผู้ชนะ
-      
+
       // "ล็อค" ตำแหน่งที่หยุดไว้ (และเอา transition ออก)
       setSpinStyle({
         transform: `translateX(${stopPosition}px)`,
@@ -118,54 +163,152 @@ export default function CaseSpinner() {
   };
 
   return (
-    <div className="w-full text-center py-10">
-      {/* 4. กรอบแสดงผล (Viewport) */}
-      <div className="relative w-full max-w-3xl h-48 mx-auto bg-gray-900/50 rounded-lg overflow-hidden ring-2 ring-gray-700">
-        {/* "ลูกศร" ชี้ตำแหน่งกลาง */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 h-full w-1 bg-yellow-400 z-10 shadow-lg shadow-yellow-400/50"></div>
-
-        {/* 5. แถบหมุน (The Reel) */}
-        {/* --- [แก้ไขข้อ 3] --- */}
-        <div
-          // ลบ className ที่ควบคุม transition
-          className="flex h-full items-center"
-          // เพิ่ม style={spinStyle}
-          style={spinStyle}
-        >
-          {reelItems.map((item, index) => (
-            <div
-              key={index}
-              // ใช้ w-[150px] และ mx-1 ตามค่าคงที่
-              className="flex-shrink-0 w-[150px] h-40 mx-1 p-2 
-                         border-2 border-gray-600 bg-gray-800 rounded-md
-                         flex flex-col items-center justify-center"
-            >
-              <img src={item.image} alt="" className="w-24 h-24 object-cover" />
-              <span className="text-white text-xs mt-2 truncate w-full">
-                {item.title}
-              </span>
-            </div>
-          ))}
-        </div>
+    <div className="min-h-screen w-full from-gray-900 via-purple-900 to-gray-900 flex flex-col items-center justify-center py-10 px-4">
+      {/* Header */}
+      <div className="mb-8 text-center">
+      <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 mb-2">
+        Mystery Box Spinner
+      </h1>
+      <p className="text-gray-400 text-lg">Try your luck and win amazing prizes!</p>
       </div>
 
-      {/* 6. ปุ่มควบคุม */}
+      {/* 4. Spinner Container */}
+      <div className="relative w-full max-w-4xl">
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-yellow-500/20 blur-3xl -z-10"></div>
+
+      <div className="relative w-full h-56 mx-auto bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl">
+        {/* Top and bottom fade overlays */}
+        <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-gray-900 to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-gray-900 to-transparent z-20 pointer-events-none"></div>
+
+        {/* Center indicator with enhanced styling */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 h-full w-1 bg-gradient-to-b from-yellow-400 via-pink-500 to-purple-500 z-10 shadow-lg shadow-yellow-400/50">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-yellow-400"></div>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[20px] border-b-purple-500"></div>
+        </div>
+
+        {/* 5. The Reel */}
+        <div
+        className="flex h-full items-center"
+        style={spinStyle}
+        >
+        {reelItems.map((item, index) => (
+          <div
+          key={index}
+          className="flex-shrink-0 w-[150px] h-44 mx-1 p-3 
+           border-2 border-gray-600/50 bg-gradient-to-br from-gray-700/80 to-gray-800/80 
+           backdrop-blur-sm rounded-xl
+           flex flex-col items-center justify-center
+           shadow-lg hover:border-yellow-400/50 transition-all duration-300
+           hover:scale-105 hover:shadow-yellow-400/20"
+          >
+          <div className="w-28 h-28 rounded-lg overflow-hidden mb-2 border border-gray-600/30 shadow-inner">
+            <img src={item.img} alt="" className="w-full h-full object-cover" />
+          </div>
+          <span className="text-white text-sm font-medium text-center truncate w-full px-1">
+            {item.name}
+          </span>
+          </div>
+        ))}
+        </div>
+      </div>
+      </div>
+
+      {/* 6. Control Button */}
       <button
-        onClick={handleSpin}
-        disabled={isSpinning}
-        className="mt-8 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-10 text-2xl rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
+      onClick={handleSpin}
+      disabled={isSpinning}
+      className="mt-10 relative group"
       >
-        {isSpinning ? "กำลังสุ่ม..." : "เปิดกล่อง!"}
+      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 
+          text-gray-900 font-bold py-4 px-12 text-2xl rounded-xl 
+          transition-all duration-300 transform hover:scale-105 active:scale-95
+          disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed 
+          disabled:text-gray-400 shadow-2xl">
+        {isSpinning ? (
+        <span className="flex items-center gap-3">
+          <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          กำลังสุ่ม...
+        </span>
+        ) : (
+        <span className="flex items-center gap-2">
+          ✨ เปิดกล่อง! ✨
+        </span>
+        )}
+      </div>
       </button>
 
-      {/* 7. แสดงผลผู้ชนะ (เมื่อหมุนจบ) */}
+      {/* 7. Winner Display - Modal Popup */}
       {winner && !isSpinning && (
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold text-yellow-400">
-            คุณได้: {winner.title}!
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
+        <div className="relative bg-gradient-to-br from-gray-800 via-gray-900 to-black border-2 border-yellow-400/50 rounded-3xl p-10 shadow-2xl max-w-md w-full mx-4 animate-[bounce-in_0.6s_ease-out]">
+        {/* Close button */}
+        <button
+          onClick={() => setWinner(null)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-pink-500/20 to-purple-500/20 blur-2xl -z-10 rounded-3xl"></div>
+
+        <div className="text-center">
+          <div className="text-7xl mb-6 animate-bounce">🎉</div>
+          <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 mb-4 animate-pulse">
+          ยินดีด้วย!
           </h2>
+          <p className="text-2xl text-white font-semibold mb-3">คุณได้รับ:</p>
+          <p className="text-4xl font-bold text-yellow-400 mb-6">{winner.name}</p>
+          <div className="w-48 h-48 mx-auto rounded-2xl overflow-hidden border-4 border-yellow-400/70 shadow-2xl shadow-yellow-400/50 mb-6">
+          <img src={winner.img} alt={winner.name} className="w-full h-full object-cover" />
+          </div>
+          <button
+          onClick={() => setWinner(null)}
+          className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 
+               text-gray-900 font-bold py-3 px-8 text-xl rounded-xl 
+               transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl"
+          >
+          ปิด
+          </button>
         </div>
+        </div>
+      </div>
       )}
+
+      <style>{`
+      @keyframes bounce-in {
+        0% {
+        transform: scale(0) translateY(100px);
+        opacity: 0;
+        }
+        50% {
+        transform: scale(1.1) translateY(-20px);
+        }
+        100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        }
+      }
+      @keyframes fade-in {
+        from {
+        opacity: 0;
+        }
+        to {
+        opacity: 1;
+        }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+      }
+      `}</style>
     </div>
   );
 }

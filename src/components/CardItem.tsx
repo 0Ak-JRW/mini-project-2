@@ -23,89 +23,6 @@ interface Item {
   amount: number;
 }
 
-// export const cardDetails = [
-//   {
-//     id: 1,
-//     title: "Card Title 1",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 2,
-//     title: "Card Title 2",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 3,
-//     title: "Card Title 3",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 4,
-//     title: "Card Title 4",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 5,
-//     title: "Card Title 5",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 6,
-//     title: "Card Title 6",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 7,
-//     title: "Card Title 7",
-//     image: "/images/Mockup.jpg",
-//     description: "Card description goes here.",
-//     price: "10.00 Bath",
-//     normalprice: "15.00 Bath",
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-//   {
-//     id: 8,
-//     title: "Card Title 8",
-//     image: "/images/Mockup.jpg",
-// export default function CardItem({ selectedFilter, searchQuery }: { selectedFilter: string, searchQuery: string }) {
-
-//     saveprice: "5.00 Bath",
-//     remaining: "5",
-//   },
-// ];
-
-
 
 export default function CardItem({ selectedFilter, searchQuery }: { selectedFilter: string, searchQuery: string }) {
 
@@ -132,112 +49,42 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
       const fetchData = async () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
           params: {
-            action: selectedFilter ,
+            action: 'getpack',
           },
           headers: {
             "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
           },
         });
-        setItemList(response.data);
+
+        if (selectedFilter === "favorite") {
+          const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+          const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+          // console.log(filteredData);
+          // setFavoriteList(filteredData[0] || null);
+          setItemList(filteredData);
+        } else {
+          setItemList(response.data);
+        }
         // console.log(response);
       };
       fetchData();
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [selectedFilter]);
+  }, []);
+
+  // console.log((localStorage.getItem('favorites') || '[]').includes('8'));
 
 
   const filteredCards = itemList.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
     // || item.description.toLowerCase().includes(searchQuery.toLowerCase());
     // const matchesFilter = selectedFilter === "all" || item.name.toLowerCase().includes(selectedFilter.toLowerCase());
     return matchesSearch
   });
 
   return (
-    // <div className="grid grid-cols-4 gap-6 pb-6">
-    //   {itemList.map((item, idx) => (
-    //     <Link
-    //       key={idx}
-    //       to={`/product/${idx}`}
-    //       className="block border border-gray-300 rounded-lg p-4 shadow-[0px_0px_6px_1px_#00fff2] hover:border-[#00ffbf] hover:shadow-[0px_0px_12px_2px_#00fff2] transition-all duration-300"
-    //     >
-    //       {/* <h2 className="text-xl font-semibold mb-2">{item?.name}</h2> */}
-    //       <h2 className="text-xl font-semibold mb-2" 
-    //        dangerouslySetInnerHTML={{
-    //           __html: DOMPurify.sanitize(
-    //             item.name
-    //               ?.replace(/\r?\n/g, '')
-    //               .replace(/<br\s*>/gi, '<br/>')
-    //           )
-    //         }}
-    //       ></h2>
-    //       <img
-    //         src={item?.img}
-    //         alt={item?.name}
-    //         className="w-full h-40 object-cover mb-4 rounded-xl"
-    //       />
-    //       {/* <p className="text-white mb-4">
-    //         {item.msg
-    //           ? item.msg.split(/<br\s*>/i).map((line, i) => (
-    //             <React.Fragment key={i}>
-    //               {line}
-    //               <br />
-    //             </React.Fragment>
-    //           ))
-    //           : null}
-    //       </p> */}
 
-
-    //       <p
-    //         className="text-white mb-4"
-    //         dangerouslySetInnerHTML={{
-    //           __html: DOMPurify.sanitize(
-    //             item.msg
-    //               ?.replace(/\r?\n/g, '')
-    //               .replace(/<br\s*>/gi, '<br/>')
-    //           )
-    //         }}
-    //       />
-
-    //       {/* {item.msg} */}
-    //       <div className="mb-4 flex flex-col items-center">
-    //         <p className="text-lg font-bold text-white">{item?.price}</p>
-    //         <p className="text-md text-white line-through">
-    //           {item?.price_agent}
-    //         </p>
-    //         <p className="text-md text-yellow-500">Save {item?.exp}</p>
-    //       </div>
-    //       <hr className="border-t border-amber-200 mb-6" />
-    //       <div className="flex justify-end mb-2">
-    //         <button
-    //           type="button"
-    //           aria-pressed="false"
-    //           onClick={(e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation();
-    //             const btn = e.currentTarget;
-    //             const pressed = btn.getAttribute("aria-pressed") === "true";
-    //             btn.setAttribute("aria-pressed", String(!pressed));
-    //           }}
-    //           className="group p-2 rounded-full focus:outline-none"
-    //           aria-label="Favorite"
-    //           title="Favorite"
-    //         >
-    //           <FaStar
-    //             className="
-    //             w-5 h-5 transition-colors
-    //             stroke-yellow-300 stroke-20
-    //             group-aria-[pressed=false]:text-transparent
-    //             group-aria-[pressed=true]:text-yellow-300
-    //           "
-    //           />
-    //         </button>
-    //       </div>
-    //     </Link>
-    //   ))}
-    // </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6 px-4">
       {filteredCards.map((item, idx) => (
@@ -248,8 +95,8 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
         >
           {/* Image Container */}
           <div className="relative overflow-hidden">
-            <img 
-              hidden = {(!item.img) ? true : false}
+            <img
+              hidden={(!item.img) ? true : false}
               src={item?.img}
               alt={item?.name}
               className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
@@ -259,26 +106,27 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
             {/* Favorite Button */}
             <button
               type="button"
-              aria-pressed={
-              JSON.parse(localStorage.getItem('favorites')).includes(idx) 
-                ? "true" 
-                : "false"
-              }
               onClick={(e) => {
-              favoriteHandler(idx);
-              e.preventDefault();
-              e.stopPropagation();
-              const btn = e.currentTarget;
-              const pressed = btn.getAttribute("aria-pressed") === "true";
-              btn.setAttribute("aria-pressed", String(!pressed));
+                e.preventDefault();
+                e.stopPropagation();
+                favoriteHandler(idx);
+                const btn = e.currentTarget;
+                const pressed = btn.getAttribute("aria-pressed") === "true";
+                btn.setAttribute("aria-pressed", String(!pressed));
+                setItemList([...itemList]);
               }}
+              aria-pressed={JSON.parse(localStorage.getItem('favorites') || '[]').includes(idx)}
               className="absolute top-3 right-3 p-2 bg-gray-900/70 backdrop-blur-sm rounded-full hover:bg-gray-800/90 hover:scale-110 transition-all duration-300 "
               aria-label="Favorite"
               title="Favorite"
             >
-              
+
               <FaStar
-              className="w-5 h-5 transition-all duration-300 stroke-yellow-400 stroke-[20px] group-aria-[pressed=false]:text-transparent group-aria-[pressed=true]:text-yellow-400 group-aria-[pressed=true]:drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+                className={`
+                w-5 h-5 transition-all duration-300 
+                stroke-yellow-400 stroke-[20px] 
+                ${JSON.parse(localStorage.getItem('favorites') || '[]').includes(idx) ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]' : 'text-transparent'}
+              `}
               />
             </button>
           </div>
