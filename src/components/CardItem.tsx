@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaStarOfLife } from "react-icons/fa";
 import { cardDetails } from "../util/cardDetails";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -111,8 +111,19 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
 
   const [itemList, setItemList] = useState<Item[]>([]);
 
-  function favoriteHandler() {
-    console.log("Favorite clicked");
+  function favoriteHandler(idx?: number) {
+    // console.log("Favorite clicked");
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const itemId = idx;
+    const isFavorite = favorites.includes(itemId);
+
+    if (isFavorite) {
+      const updatedFavorites = favorites.filter((id: number) => id !== itemId);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    } else {
+      favorites.push(itemId);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
   }
 
 
@@ -136,7 +147,6 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
     }
   }, [selectedFilter]);
 
-  console.log(itemList);
 
   const filteredCards = itemList.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
@@ -249,21 +259,26 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
             {/* Favorite Button */}
             <button
               type="button"
-              aria-pressed="false"
+              aria-pressed={
+              JSON.parse(localStorage.getItem('favorites')).includes(idx) 
+                ? "true" 
+                : "false"
+              }
               onClick={(e) => {
-                favoriteHandler();
-                // e.preventDefault();
-                // e.stopPropagation();
-                // const btn = e.currentTarget;
-                // const pressed = btn.getAttribute("aria-pressed") === "true";
-                // btn.setAttribute("aria-pressed", String(!pressed));
+              favoriteHandler(idx);
+              e.preventDefault();
+              e.stopPropagation();
+              const btn = e.currentTarget;
+              const pressed = btn.getAttribute("aria-pressed") === "true";
+              btn.setAttribute("aria-pressed", String(!pressed));
               }}
-              className="absolute top-3 right-3 p-2 bg-gray-900/70 backdrop-blur-sm rounded-full hover:bg-gray-800/90 transition-all duration-300"
+              className="absolute top-3 right-3 p-2 bg-gray-900/70 backdrop-blur-sm rounded-full hover:bg-gray-800/90 hover:scale-110 transition-all duration-300 "
               aria-label="Favorite"
               title="Favorite"
             >
+              
               <FaStar
-                className="w-5 h-5 transition-all duration-300 stroke-yellow-400 stroke-[20px] group-aria-[pressed=false]:text-transparent group-aria-[pressed=true]:text-yellow-400 group-aria-[pressed=true]:drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+              className="w-5 h-5 transition-all duration-300 stroke-yellow-400 stroke-[20px] group-aria-[pressed=false]:text-transparent group-aria-[pressed=true]:text-yellow-400 group-aria-[pressed=true]:drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]"
               />
             </button>
           </div>

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { cardDetails } from "../util/cardDetails";
+// import { cardDetails } from "../util/cardDetails";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -36,7 +36,6 @@ export default function Details() {
     }
   }, [id]);
 
-  console.log(filteredItem);
 
   return (
     <div className="text-white">
