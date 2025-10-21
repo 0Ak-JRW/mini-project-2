@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoSearch } from "react-icons/go";
 import CardItem from "../components/CardItem";
+import axios from "axios";
 
 
 const filterBar = [
@@ -17,11 +18,60 @@ const filterBar = [
 
 ];
 
+interface Item {
+  type_code: number;
+  app: string;
+  msg_groups: string;
+  name_groups: string;
+  groups: string;
+  name: string;
+  img: string;
+  img_cover: string;
+  img_icon: string;
+  msg: string;
+  price: number;
+  price_agent: number;
+  exp: number;
+  amount: number;
+}
+
+
 // console.log(import.meta.env.VITE_API_TOKEN);
 
 export default function Home() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>("getpack");
   const [searchQuery, setSearchQuery] = useState("");
+  const [itemList, setItemList] = useState<Item[]>([]);
+
+
+  
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
+          params: {
+            action: 'getpack',
+          },
+          headers: {
+            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+          },
+        });
+
+        if (selectedFilter === "favorite") {
+          const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+          const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+
+          setItemList(filteredData);
+        } else {
+          setItemList(response.data);
+        }
+        // console.log(response);
+      };
+      fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, []);
 
   return (
     <>
@@ -61,7 +111,8 @@ export default function Home() {
         </div>
 
         <div className="pt-8">
-          <CardItem selectedFilter={selectedFilter || ""} searchQuery={searchQuery} />
+          <CardItem itemData={itemList} searchQuery={searchQuery} />
+          {/* <CardItem selectedFilter={selectedFilter || ""} searchQuery={searchQuery} /> */}
         </div>
       </div>
     </>

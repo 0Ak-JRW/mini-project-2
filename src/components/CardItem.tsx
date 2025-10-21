@@ -24,64 +24,80 @@ interface Item {
 }
 
 
-export default function CardItem({ selectedFilter, searchQuery }: { selectedFilter: string, searchQuery: string }) {
+// export default function CardItem(itemData: any) {
+// export default function CardItem(itemData: any) {
+export default function CardItem({ itemData, searchQuery } : { itemData: any; searchQuery: string }) {
 
   const [itemList, setItemList] = useState<Item[]>([]);
-
-  function favoriteHandler(idx?: number) {
-    // console.log("Favorite clicked");
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const itemId = idx;
-    const isFavorite = favorites.includes(itemId);
-
-    if (isFavorite) {
-      const updatedFavorites = favorites.filter((id: number) => id !== itemId);
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-    } else {
-      favorites.push(itemId);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-    }
-  }
-
+  const [filteredCards, setFilteredCards] = useState<Item[]>([]);
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
-          params: {
-            action: 'getpack',
-          },
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
-        });
+    if (!itemData) return;
+    setItemList(itemData);
+  }, [itemData]);
 
-        if (selectedFilter === "favorite") {
-          const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
-          const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
-          // console.log(filteredData);
-          // setFavoriteList(filteredData[0] || null);
-          setItemList(filteredData);
-        } else {
-          setItemList(response.data);
-        }
-        // console.log(response);
-      };
-      fetchData();
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
+  useEffect(() => {
+    const filtered = itemList.filter((item) => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    });
+    setFilteredCards(filtered);
+  }, [itemList, searchQuery]);
+
+  // function favoriteHandler(idx?: number) {
+  //   // console.log("Favorite clicked");
+  //   const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  //   const itemId = idx;
+  //   const isFavorite = favorites.includes(itemId);
+
+  //   if (isFavorite) {
+  //     const updatedFavorites = favorites.filter((id: number) => id !== itemId);
+  //     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+  //   } else {
+  //     favorites.push(itemId);
+  //     localStorage.setItem('favorites', JSON.stringify(favorites));
+  //   }
+  // }
+
+
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
+  //         params: {
+  //           action: 'getpack',
+  //         },
+  //         headers: {
+  //           "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+  //         },
+  //       });
+
+  //       if (selectedFilter === "favorite") {
+  //         const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+  //         const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+  //         // console.log(filteredData);
+  //         // setFavoriteList(filteredData[0] || null);
+  //         setItemList(filteredData);
+  //       } else {
+  //         setItemList(response.data);
+  //       }
+  //       // console.log(response);
+  //     };
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // }, []);
 
   // console.log((localStorage.getItem('favorites') || '[]').includes('8'));
 
 
-  const filteredCards = itemList.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    // || item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    // const matchesFilter = selectedFilter === "all" || item.name.toLowerCase().includes(selectedFilter.toLowerCase());
-    return matchesSearch
-  });
+  // const filteredCards = itemList.filter((item) => {
+  //   const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  //   // || item.description.toLowerCase().includes(searchQuery.toLowerCase());
+  //   // const matchesFilter = selectedFilter === "all" || item.name.toLowerCase().includes(selectedFilter.toLowerCase());
+  //   return matchesSearch
+  // });
 
   return (
 
@@ -109,7 +125,7 @@ export default function CardItem({ selectedFilter, searchQuery }: { selectedFilt
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                favoriteHandler(idx);
+                // favoriteHandler(idx);
                 const btn = e.currentTarget;
                 const pressed = btn.getAttribute("aria-pressed") === "true";
                 btn.setAttribute("aria-pressed", String(!pressed));

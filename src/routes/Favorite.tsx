@@ -12,8 +12,87 @@ import axios from "axios";
 //     { to: "/software", label: "Software" },
 // ];
 
+interface Item {
+    type_code: number;
+    app: string;
+    msg_groups: string;
+    name_groups: string;
+    groups: string;
+    name: string;
+    img: string;
+    img_cover: string;
+    img_icon: string;
+    msg: string;
+    price: number;
+    price_agent: number;
+    exp: number;
+    amount: number;
+}
+
+
 export default function Favorite() {
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedFilter, setSelectedFilter] = useState<string | null>("getpack");
+    const [itemList, setItemList] = useState<Item[]>([]);
+
+
+
+    // useEffect(() => {
+    //     try {
+    //         const fetchData = async () => {
+    //             const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
+    //                 params: {
+    //                     action: 'getpack',
+    //                 },
+    //                 headers: {
+    //                     "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+    //                 },
+    //             });
+
+    //             if (selectedFilter === "favorite") {
+    //                 const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+    //                 const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+
+    //                 setItemList(filteredData);
+    //             } else {
+    //                 setItemList(response.data);
+    //             }
+    //             // console.log(response);
+    //         };
+    //         fetchData();
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //     }
+    // }, []);
+
+
+    useEffect(() => {
+        try {
+            const fetchData = async () => {
+                const response = await axios.get(`/api/v1`, {
+                    params: {
+                        action: 'getpack',
+                    },
+                    headers: {  
+                        "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+                    },
+                });
+
+                const data = response.data;
+
+                const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+                const filteredData = data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+
+                setItemList(filteredData);
+                console.log(filteredData);
+            };
+            fetchData();
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    },[]);
+
 
     return (
         <>
@@ -42,7 +121,8 @@ export default function Favorite() {
 
                 {/* Cards Grid */}
                 <div className="pt-8">
-                    <CardItem selectedFilter="favorite" searchQuery={searchQuery} />
+                    {/* <CardItem selectedFilter="favorite" searchQuery={searchQuery} /> */}
+                    <CardItem itemData={itemList} searchQuery={searchQuery} />
                 </div>
             </div>
         </>
