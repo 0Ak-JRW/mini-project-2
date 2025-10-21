@@ -41,6 +41,7 @@ export default function Home() {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}`,{
           headers: {
             'Content-Type': 'application/json',
+            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
           },
           params: {
             action: 'getpack',
