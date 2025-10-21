@@ -36,25 +36,32 @@ export default function Home() {
   const [itemList, setItemList] = useState([] as itemList[]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}`,{
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
+    try {
+      const fetchData = async () => {
+        const response = await axios.get(`/api/v1`, {
           params: {
             action: 'getpack',
           },
+          headers: {
+            "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
+          },
         });
-        console.log(response);
-        // setItemList(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
-    fetchData();
+        // if (selectedFilter === "favorite") {
+        //   const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+        //   const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+        //   // console.log(filteredData);
+        //   // setFavoriteList(filteredData[0] || null);
+        //   setItemList(filteredData);
+        // } else {
+        //   setItemList(response.data);
+        // }
+        setItemList(response.data);
+      };
+      fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
 
 
