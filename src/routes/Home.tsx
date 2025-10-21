@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoSearch } from "react-icons/go";
 import CardItem from "../components/CardItem";
+import axios from "axios";
 
 const filterBar = [
   { to: "/all", label: "All" },
@@ -11,8 +12,44 @@ const filterBar = [
   { to: "/software", label: "Software" },
 ];
 
+interface itemList {
+  type_code: number;
+  app: string;
+  msg_groups: string;
+  name_groups: string;
+  groups: string;
+  name: string;
+  img: string;
+  img_cover: string;
+  img_icon: string;
+  msg: string;
+  price: number;
+  price_agent: number;
+  exp: number;
+  amount: number;
+}
+
+
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [itemList, setItemList] = useState([] as itemList[]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}?action=getpack`);
+        const data = response.data;
+        console.log(data);
+        setItemList(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   return (
     <>
@@ -47,7 +84,7 @@ export default function Home() {
         </div>
 
         <div className="pt-8">
-          <CardItem />
+          <CardItem data={itemList} />
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
-// import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-import { cardDetails } from "../util/cardDetails";
+// import { cardDetails } from "../util/cardDetails";
 
 // export const cardDetails = [
 //   {
@@ -86,7 +86,16 @@ import { cardDetails } from "../util/cardDetails";
 //   },
 // ];
 
-export default function CardItem() {
+export default function CardItem(data: any) {
+  const [cardDetails, setCardDetails] = useState([] as any[]);
+  
+  useEffect(() => {
+    setCardDetails(data.data);
+  }, [data.data]);
+
+
+
+
   return (
     <div className="grid grid-cols-4 gap-6 pb-6">
       {cardDetails.map((card) => (
