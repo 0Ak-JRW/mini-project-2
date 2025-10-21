@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
+import DOMPurify from "dompurify";
 // import { cardDetails } from "../util/cardDetails";
 
 // export const cardDetails = [
@@ -47,7 +48,18 @@ export default function CardItem(data: any) {
             alt={card.name}
             className="w-full h-40 object-cover mb-4 rounded-xl"
           />
-          <p className="text-white mb-4">{card.msg}</p>
+          {/* <p className="text-white mb-4">{card.msg}</p> */}
+          <p className="text-white mb-4"
+             dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  card.msg
+                    ?.replace(/\r?\n/g, '')
+                    .replace(/<br\s*>/gi, '<br/>')
+                )
+              }}
+          >
+            
+          </p>
           <div className="mb-4 flex flex-col items-center">
             <p className="text-lg font-bold text-white">{card.price}</p>
             <p className="text-md text-white line-through">
