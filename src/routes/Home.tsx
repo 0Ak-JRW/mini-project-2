@@ -38,10 +38,16 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}?action=getpack`);
-        const data = response.data;
-        console.log(data);
-        setItemList(data);
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}`,{
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          params: {
+            action: 'getpack',
+          },
+        });
+        console.log(response);
+        // setItemList(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
