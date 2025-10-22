@@ -1,35 +1,103 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 export default function About() {
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center py-2">
-        <h1 className="text-center text-3xl font-bold">About Company</h1>
-        <div className="mt-6 flex flex-col items-center">
-          <img src="/images/unnamed.webp" alt="Company Logo" className="company-logo rounded-3xl shadow-[0_4px_30px_#00FFE9]" />
+    <div className="min-h-screen from-slate-900 via-slate-800 to-slate-900 px-4 py-12">
+      <div className="max-w-6xl mx-auto">
+      {/* Header Section */}
+      <div className="text-center mb-16 animate-fade-in">
+        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4">
+        About Company
+        </h1>
+        <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full"></div>
+      </div>
+
+      {/* Company Logo Section */}
+      <div className="flex justify-center mb-16">
+        <div className="relative group">
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+        <img 
+          src="/images/unnamed.webp" 
+          alt="Company Logo" 
+          className="relative w-64 h-64 object-cover rounded-3xl shadow-2xl transform group-hover:scale-105 transition duration-300" 
+        />
         </div>
       </div>
-      <div className="mt-6 text-start py-7">
-        <p className="font-bold text-2xl">Pixelnetwork Co., Ltd.</p>
-        <p className="mt-6 text-md">Address : 9/1 หมู่ 5 ถนนพหลโยธิน ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 12120</p>
+
+      {/* Company Info Card */}
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-8 border border-slate-700/50 hover:border-cyan-400/50 transition duration-300">
+        <h2 className="text-3xl font-bold text-cyan-400 mb-6 flex items-center gap-3">
+        <span className="text-4xl">🏢</span>
+        Pixelnetwork Co., Ltd.
+        </h2>
+        <p className="text-slate-300 text-lg leading-relaxed">
+        <span className="font-semibold text-cyan-400">Address:</span> 9/1 หมู่ 5 ถนนพหลโยธิน ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 12120
+        </p>
       </div>
-      <div className="mb-10 text-start py-2">
-        <p className="font-bold text-2xl">Contact Information</p>
-        <div className="mt-6">
-          <p>Name : Sitthisak Putthimit</p>
-          <p>Phone Number : 0918429331</p>
-          <p>Email : sitthisak.putt@bumail.net</p>
+
+      {/* Contact Information Section */}
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-700/50">
+        <h2 className="text-3xl font-bold text-cyan-400 mb-8 flex items-center gap-3">
+        <span className="text-4xl">📞</span>
+        Contact Information
+        </h2>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Contact Card 1 */}
+        <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-400/20 transition duration-300">
+          <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-2xl">
+            👤
+          </div>
+          <h3 className="font-bold text-xl text-white">Sitthisak Putthimit</h3>
+          </div>
+          <div className="space-y-2 text-slate-300">
+          <p className="flex items-center gap-2">
+            <span className="text-cyan-400">📱</span> 0918429331
+          </p>
+          <p className="flex items-center gap-2 break-all">
+            <span className="text-cyan-400">✉️</span> sitthisak.putt@bumail.net
+          </p>
+          </div>
         </div>
-        <div className="mt-6">
-          <p>Name : Korawat Soodnalao</p>
-          <p>Phone Number : 0972207605</p>
-          <p>Email : korawat.sood@bumail.net</p>
+
+        {/* Contact Card 2 */}
+        <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-400/20 transition duration-300">
+          <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-2xl">
+            👤
+          </div>
+          <h3 className="font-bold text-xl text-white">Korawat Soodnalao</h3>
+          </div>
+          <div className="space-y-2 text-slate-300">
+          <p className="flex items-center gap-2">
+            <span className="text-cyan-400">📱</span> 0972207605
+          </p>
+          <p className="flex items-center gap-2 break-all">
+            <span className="text-cyan-400">✉️</span> korawat.sood@bumail.net
+          </p>
+          </div>
         </div>
-        <div className="mt-6">
-          <p>Name : Jeerawat Rueanduangchan</p>
-          <p>Phone Number : 0800651937</p>
-          <p>Email : jeerawat.ruen@bumail.net</p>
+
+        {/* Contact Card 3 */}
+        <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-400/20 transition duration-300">
+          <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-2xl">
+            👤
+          </div>
+          <h3 className="font-bold text-xl text-white">Jeerawat Rueanduangchan</h3>
+          </div>
+          <div className="space-y-2 text-slate-300">
+          <p className="flex items-center gap-2">
+            <span className="text-cyan-400">📱</span> 0800651937
+          </p>
+          <p className="flex items-center gap-2 break-all">
+            <span className="text-cyan-400">✉️</span> jeerawat.ruen@bumail.net
+          </p>
+          </div>
         </div>
+        </div>
+      </div>
       </div>
     </div>
   );
