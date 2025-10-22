@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { cardDetails } from "../util/cardDetails";
 import axios from "axios";
+import DOMPurify from 'dompurify';
 
 interface Item {
   type_code: number;
@@ -58,7 +59,7 @@ export default function CaseSpinner() {
         });
         // setReelItems(response.data);
         setItemList(response.data);
-        // console.log(response);
+        console.log(response);
       };
       fetchData();
     } catch (error) {
@@ -206,8 +207,15 @@ export default function CaseSpinner() {
           <div className="w-28 h-28 rounded-lg overflow-hidden mb-2 border border-gray-600/30 shadow-inner">
             <img src={item.img} alt="" className="w-full h-full object-cover" />
           </div>
-          <span className="text-white text-sm font-medium text-center truncate w-full px-1">
-            {item.name}
+          <span className="text-white text-sm font-medium text-center truncate w-full px-1"
+           dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+            item.name
+              ?.replace(/\r?\n/g, '')
+              .replace(/<br\s*>/gi, '<br/>')
+            )
+          }}>
+            {/* {item.name} */}
           </span>
           </div>
         ))}
@@ -266,7 +274,15 @@ export default function CaseSpinner() {
           ยินดีด้วย!
           </h2>
           <p className="text-2xl text-white font-semibold mb-3">คุณได้รับ:</p>
-          <p className="text-4xl font-bold text-yellow-400 mb-6">{winner.name}</p>
+          <p className="text-4xl font-bold text-yellow-400 mb-6" 
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+            winner.name
+              ?.replace(/\r?\n/g, '')
+              .replace(/<br\s*>/gi, '<br/>')
+            )
+          }}
+          ></p>
           <div className="w-48 h-48 mx-auto rounded-2xl overflow-hidden border-4 border-yellow-400/70 shadow-2xl shadow-yellow-400/50 mb-6">
           <img src={winner.img} alt={winner.name} className="w-full h-full object-cover" />
           </div>

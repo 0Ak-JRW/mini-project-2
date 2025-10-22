@@ -44,7 +44,7 @@ export default function Home() {
   const [itemList, setItemList] = useState<Item[]>([]);
 
 
-  
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -57,14 +57,26 @@ export default function Home() {
           },
         });
 
-        if (selectedFilter === "favorite") {
-          const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
-          const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+        // localStorage.setItem('itemList', JSON.stringify(response.data));
+        // setItemList(response.data);
 
-          setItemList(filteredData);
-        } else {
-          setItemList(response.data);
-        }
+        const dataWithId = response.data.map((item: Item, index: number) => ({
+          ...item,
+          id: index + 1, // เริ่มจาก 1
+        }));
+
+        localStorage.setItem('itemList', JSON.stringify(dataWithId));
+
+        setItemList(dataWithId);
+
+        // if (selectedFilter === "favorite") {
+        //   const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
+        //   const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
+
+        //   setItemList(filteredData);
+        // } else {
+        //   setItemList(response.data);
+        // }
         // console.log(response);
       };
       fetchData();
@@ -72,6 +84,10 @@ export default function Home() {
       console.error("Error fetching data:", error);
     }
   }, []);
+
+  const handleFavorite = (item: Item) => {
+    // console.log("Favorite clicked");
+  }
 
   return (
     <>
@@ -81,11 +97,10 @@ export default function Home() {
           {filterBar.map((item, idx) => (
             <button
               key={idx}
-              className={`px-6 py-2.5 min-w-[120px] text-sm font-medium rounded-full transition-all duration-300 ${
-          selectedFilter === item.endpoint
-            ? "bg-[#00fff2] text-gray-900 shadow-lg shadow-[#00fff2]/50"
-            : "bg-transparent text-white border border-white/30 hover:border-[#00fff2] hover:shadow-md hover:shadow-[#00fff2]/30"
-              }`}
+              className={`px-6 py-2.5 min-w-[120px] text-sm font-medium rounded-full transition-all duration-300 ${selectedFilter === item.endpoint
+                  ? "bg-[#00fff2] text-gray-900 shadow-lg shadow-[#00fff2]/50"
+                  : "bg-transparent text-white border border-white/30 hover:border-[#00fff2] hover:shadow-md hover:shadow-[#00fff2]/30"
+                }`}
               onClick={() => setSelectedFilter(item.endpoint)}
             >
               {item.label}
@@ -96,18 +111,18 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center pt-8 w-full max-w-2xl mx-auto space-y-4">
           <h1 className="text-2xl font-bold text-white">Search Application</h1>
           <form className="relative w-full">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-          <GoSearch size={20} />
-              </span>
-              
-              <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search for applications..."
-          className="rounded-xl w-full bg-gray-900/50 backdrop-blur-sm border border-white/20 py-3.5 pl-12 pr-4 text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00fff2] focus:border-transparent transition-all duration-300 hover:border-[#00fff2]/50"
-              />
-            </form>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <GoSearch size={20} />
+            </span>
+
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for applications..."
+              className="rounded-xl w-full bg-gray-900/50 backdrop-blur-sm border border-white/20 py-3.5 pl-12 pr-4 text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00fff2] focus:border-transparent transition-all duration-300 hover:border-[#00fff2]/50"
+            />
+          </form>
         </div>
 
         <div className="pt-8">

@@ -35,64 +35,19 @@ export default function Favorite() {
     const [selectedFilter, setSelectedFilter] = useState<string | null>("getpack");
     const [itemList, setItemList] = useState<Item[]>([]);
 
-
-
-    // useEffect(() => {
-    //     try {
-    //         const fetchData = async () => {
-    //             const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
-    //                 params: {
-    //                     action: 'getpack',
-    //                 },
-    //                 headers: {
-    //                     "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
-    //                 },
-    //             });
-
-    //             if (selectedFilter === "favorite") {
-    //                 const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
-    //                 const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
-
-    //                 setItemList(filteredData);
-    //             } else {
-    //                 setItemList(response.data);
-    //             }
-    //             // console.log(response);
-    //         };
-    //         fetchData();
-    //     } catch (error) {
-    //         console.error("Error fetching data:", error);
-    //     }
-    // }, []);
-
-
     useEffect(() => {
         try {
-            const fetchData = async () => {
-                const response = await axios.get(`/api/v1`, {
-                    params: {
-                        action: 'getpack',
-                    },
-                    headers: {  
-                        "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
-                    },
-                });
-
-                const data = response.data;
-
-                const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
-                const filteredData = data.filter((item: any, idx: number) => favoriteIds.includes(idx));
-
-                setItemList(filteredData);
-                console.log(filteredData);
-            };
-            fetchData();
-
+            const getData = JSON.parse(localStorage.getItem('favorites') || '[]');
+            console.log('getData', getData);
+            if (getData) {
+                setItemList(getData);
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
         }
-    },[]);
+    }, []);
 
+    console.log('itemList in favorite', itemList);
 
     return (
         <>
