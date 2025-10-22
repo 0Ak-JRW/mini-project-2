@@ -1,55 +1,51 @@
 import { useParams } from "react-router-dom";
 // import { cardDetails } from "../util/cardDetails";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function Details() {
   const { id } = useParams();
-  // const card = cardDetails.find(c => c.id === Number(id));
-  if (!id) {
-    return <div>Product not found</div>;
-  }
-
   const [filteredItem, setFilteredItem] = useState<any>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     try {
-      const fetchData = async () => {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE}`, {
-          params: {
-            action: "getpack",
-          },
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
-        });
+      const getData = JSON.parse(localStorage.getItem('itemList') || '[]');
+      const item = getData.find((item: any, idx: number) => item.id === Number(id));
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      const itemId = item.id;
+      const favoriteStatus = favorites.some((favItem: any) => favItem.id === itemId);
+      setIsFavorite(favoriteStatus);
+      setFilteredItem(item);
 
-        console.log(response.data);
-        const filteredData = response.data.filter(
-          (item: any, idx: number) => idx === Number(id)
-        );
-        setFilteredItem(filteredData[0] || null);
-      };
-      fetchData();
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [id]);
+  }, [id, isFavorite]);
+
+
+
+
 
   function favoriteHandler(data: any) {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    console.log("favorites", favorites);
     const itemId = data.id;
     const isFavorite = favorites.some((item: any) => item.id === itemId);
 
+    // console.log("isFavorite", isFavorite);
     if (isFavorite) {
       const updatedFavorites = favorites.filter(
         (item: any) => item.id !== itemId
       );
-      console.log("updatedFavorites", updatedFavorites);
+      // console.log("updatedFavorites", updatedFavorites);
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+      // return
     } else {
       favorites.push(data);
       localStorage.setItem("favorites", JSON.stringify(favorites));
+      setIsFavorite(true);
+      // return
     }
   }
 
@@ -112,9 +108,8 @@ export default function Details() {
               {/* Stock Status */}
               <div className="mb-6">
                 <p
-                  className={`text-lg font-semibold ${
-                    filteredItem.amount > 0 ? "text-green-400" : "text-red-400"
-                  }`}
+                  className={`text-lg font-semibold ${filteredItem.amount > 0 ? "text-green-400" : "text-red-400"
+                    }`}
                 >
                   {filteredItem.amount > 0
                     ? `✓ In Stock: ${filteredItem.amount} available`
@@ -132,7 +127,8 @@ export default function Details() {
                 }}
                 className="w-full md:w-auto px-8 py-4 rounded-lg font-bold text-lg cursor-pointer transition-all bg-gradient-to-r from-yellow-300 to-yellow-600 hover:from-yellow-400 hover:to-yellow-700 shadow-lg hover:shadow-xl"
               >
-                Add to Favorite
+                {/* Add to Favorite */}
+                {isFavorite ? "Remove from Favorite" : "Add to Favorite"}
               </button>
             </div>
           </div>

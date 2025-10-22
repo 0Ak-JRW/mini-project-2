@@ -29,7 +29,6 @@ export default function Favorite() {
     useEffect(() => {
         try {
             const getData = JSON.parse(localStorage.getItem('favorites') || '[]');
-            console.log('getData', getData);
             if (getData) {
                 setItemList(getData);
             }
@@ -38,7 +37,6 @@ export default function Favorite() {
         }
     }, []);
 
-    console.log('itemList in favorite', itemList);
 
     return (
         <>

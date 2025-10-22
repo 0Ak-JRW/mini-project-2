@@ -22,13 +22,7 @@ interface Item {
   id: number;
 }
 
-export default function CardItem({
-  itemData,
-  searchQuery,
-}: {
-  itemData: any;
-  searchQuery: string;
-}) {
+export default function CardItem({ itemData, searchQuery }: { itemData: any; searchQuery: string; }) {
   const [itemList, setItemList] = useState<Item[]>([]);
   const [filteredCards, setFilteredCards] = useState<Item[]>([]);
 
@@ -47,7 +41,6 @@ export default function CardItem({
     setFilteredCards(filtered);
   }, [itemList, searchQuery]);
 
-  useEffect(() => {}, [filteredCards]);
 
   function favoriteHandler(data: Item) {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
