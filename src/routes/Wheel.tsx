@@ -20,23 +20,11 @@ interface Item {
   amount: number;
 }
 
-
-
-// (เราใช้ typeof cardDetails[0] เพื่อบอก TypeScript ว่า
-// state นี้จะมีหน้าตาเหมือน object 1 ชิ้นใน array)
 type CardType = (typeof cardDetails)[0];
-
-// --- 1. ค่าคงที่สำหรับตั้งค่า Spinner ---
-
-// ความกว้างของ Card แต่ละใบ (px)
 const ITEM_WIDTH_PX = 150;
-// Margin ซ้ายขวา (mx-1 = 4px * 2 = 8px)
 const ITEM_MARGIN_PX = 8;
-// ความกว้างรวมของ 1 ไอเทม
 const TOTAL_ITEM_WIDTH = ITEM_WIDTH_PX + ITEM_MARGIN_PX;
-// ความยาวของแถบหมุน (จำนวนไอเทม)
-const REEL_LENGTH = 60; // (ใช้ค่า 60 ของคุณ)
-// "ตำแหน่ง" ที่เราจะวางผู้ชนะ (index ที่ 27 = ไอเทมชิ้นที่ 28)
+const REEL_LENGTH = 60;
 const WINNER_INDEX = 39;
 
 export default function CaseSpinner() {
@@ -57,7 +45,6 @@ export default function CaseSpinner() {
             "Authorization": `Bearer ${import.meta.env.VITE_API_KEY}`,
           },
         });
-        // setReelItems(response.data);
         setItemList(response.data);
         console.log(response);
       };
@@ -67,129 +54,93 @@ export default function CaseSpinner() {
     }
   }, []);
 
-  // State สำหรับเก็บ "แถบหมุน" ที่เราสร้างขึ้น
   const [reelItems, setReelItems] = useState<Item[]>([]);
 
-  // --- [แก้ไขข้อ 1] ---
-  // เปลี่ยนจาก useState(0) เป็น state object ที่เก็บ style
   const [spinStyle, setSpinStyle] = useState<React.CSSProperties>({
     transform: 'translateX(0px)',
     transition: 'none',
   });
 
-  // --- 2. ฟังก์ชัน Helper --- (เหมือนเดิม)
-
-  // 2.1 สุ่มไอเทม 1 ชิ้นจาก Pool (6 ชิ้น)
   const pickWinner = (): Item => {
     const randomIndex = Math.floor(Math.random() * itemList.length);
 
     return itemList[randomIndex];
   };
 
-  // 2.2 สร้างแถบหมุน "ปลอม"
   const generateReel = (winner: Item): Item[] => {
     const reel: Item[] = [];
     for (let i = 0; i < REEL_LENGTH; i++) {
       if (i === WINNER_INDEX) {
-        // "วางยา" ผู้ชนะไว้ที่ตำแหน่ง WINNER_INDEX
         reel.push(winner);
       } else {
-        // ตำแหน่งอื่น สุ่มใส่
         reel.push(pickWinner());
       }
     }
     return reel;
   };
 
-  // --- 3. ฟังก์ชันหลัก: เมื่อกดปุ่ม "สุ่ม" ---
-  // --- [แก้ไขข้อ 2] --- (อัปเดต Logic ทั้งหมด)
   const handleSpin = () => {
     if (isSpinning) return;
     setIsSpinning(true);
-    setWinner(null); // เคลียร์ผู้ชนะเก่า (ถ้ามี)
+    setWinner(null);
 
-    // 3.1 (Reset) 
-    // สั่ง "วาร์ป" กลับไปที่ 0 ทันที (เพราะ transition: 'none')
     setSpinStyle({
       transition: 'none',
       transform: 'translateX(0px)'
     });
 
-    // 3.2 สุ่มผู้ชนะ "ตัวจริง"
     const newWinner = pickWinner();
 
-    // 3.3 สร้างแถบหมุนใหม่ โดย "วางยา" ผู้ชนะ
     const newReel = generateReel(newWinner);
     setReelItems(newReel);
 
-    // 3.4 คำนวณตำแหน่งที่จะหยุด
-    // (ความกว้าง Container / 2) - (ตำแหน่งกลางของ Winner Item)
+    const containerCenter = 768 / 2;
 
-    // (max-w-3xl คือ 768px)
-    const containerCenter = 768 / 2; // (อัปเดตจาก 640 เป็น 768)
-
-    // ตำแหน่งขอบซ้ายของ Winner
     const winnerLeftEdge = WINNER_INDEX * TOTAL_ITEM_WIDTH;
-    // ตำแหน่งกึ่งกลางของ Winner
     const winnerCenter = winnerLeftEdge + TOTAL_ITEM_WIDTH / 2;
 
-    // (Optional) สุ่ม "Jitter" เล็กน้อย (ซ้าย/ขวา 20%) ให้ดูไม่เป๊ะเกินไป
     const jitter = (Math.random() - 0.5) * (TOTAL_ITEM_WIDTH * 0.4);
 
-    // เราต้องเลื่อนไปทางซ้าย (ค่าลบ)
     const stopPosition = -(winnerCenter - containerCenter + jitter);
 
-    // 3.5 สั่งให้ "เริ่มหมุน" (สำคัญ: ใช้ setTimeout 50ms)
-    // "รอ" ให้ React ทำ Step 3.1 (Reset) ให้เสร็จก่อน
     setTimeout(() => {
-      // ค่อยสั่งให้ "หมุน" (เพิ่ม transition + ตำแหน่งหยุด)
       setSpinStyle({
         transform: `translateX(${stopPosition}px)`,
-        transition: 'transform 5000ms ease-out' // 5000ms จากโค้ดเดิมของคุณ
+        transition: 'transform 5000ms ease-out'
       });
-    }, 50); // หน่วงเวลาเล็กน้อย (50ms)
+    }, 50);
 
-    // 3.6 ตั้งเวลา "หลังหมุนจบ"
     setTimeout(() => {
       setIsSpinning(false);
-      setWinner(newWinner); // แสดงผลผู้ชนะ
-
-      // "ล็อค" ตำแหน่งที่หยุดไว้ (และเอา transition ออก)
+      setWinner(newWinner);
       setSpinStyle({
         transform: `translateX(${stopPosition}px)`,
         transition: 'none'
       });
 
-    }, 5050); // 5000ms (duration) + 50ms (delay)
+    }, 5050);
   };
 
   return (
     <div className="min-h-screen w-full from-gray-900 via-purple-900 to-gray-900 flex flex-col items-center justify-center py-10 px-4 ">
-      {/* Header */}
       <div className="mb-8 text-center">
       <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 mb-2">
         Mystery Box Spinner
       </h1>
       <p className="text-gray-400 text-lg">Try your luck and win amazing prizes!</p>
       </div>
-
-      {/* 4. Spinner Container */}
       <div className="relative w-full max-w-4xl">
-      {/* Glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-yellow-500/20 blur-3xl -z-10"></div>
 
       <div className="relative w-full h-56 mx-auto bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl">
-        {/* Top and bottom fade overlays */}
         <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-gray-900 to-transparent z-20 pointer-events-none"></div>
         <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-gray-900 to-transparent z-20 pointer-events-none"></div>
 
-        {/* Center indicator with enhanced styling */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 h-full w-1 bg-gradient-to-b from-yellow-400 via-pink-500 to-purple-500 z-10 shadow-lg shadow-yellow-400/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-yellow-400"></div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[20px] border-b-purple-500"></div>
         </div>
 
-        {/* 5. The Reel */}
         <div
         className="flex h-full items-center"
         style={spinStyle}
@@ -215,15 +166,12 @@ export default function CaseSpinner() {
               .replace(/<br\s*>/gi, '<br/>')
             )
           }}>
-            {/* {item.name} */}
           </span>
           </div>
         ))}
         </div>
       </div>
       </div>
-
-      {/* 6. Control Button */}
       <button
       onClick={handleSpin}
       disabled={isSpinning}
@@ -250,12 +198,9 @@ export default function CaseSpinner() {
         )}
       </div>
       </button>
-
-      {/* 7. Winner Display - Modal Popup */}
       {winner && !isSpinning && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
         <div className="relative bg-gradient-to-br from-gray-800 via-gray-900 to-black border-2 border-yellow-400/50 rounded-3xl p-10 shadow-2xl max-w-md w-full mx-4 animate-[bounce-in_0.6s_ease-out]">
-        {/* Close button */}
         <button
           onClick={() => setWinner(null)}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
@@ -264,8 +209,6 @@ export default function CaseSpinner() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-
-        {/* Glow effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-pink-500/20 to-purple-500/20 blur-2xl -z-10 rounded-3xl"></div>
 
         <div className="text-center">

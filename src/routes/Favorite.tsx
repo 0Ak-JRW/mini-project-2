@@ -3,15 +3,6 @@ import { GoSearch } from "react-icons/go";
 import CardItem from "../components/CardItem";
 import axios from "axios";
 
-// const filterBar = [
-//     { to: "/all", label: "All" },
-//     { to: "/account", label: "Account" },
-//     { to: "/streaming", label: "Streaming" },
-//     { to: "/games", label: "Games" },
-//     { to: "/vpn", label: "VPN" },
-//     { to: "/software", label: "Software" },
-// ];
-
 interface Item {
     type_code: number;
     app: string;

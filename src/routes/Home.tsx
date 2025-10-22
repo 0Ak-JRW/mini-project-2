@@ -5,17 +5,8 @@ import axios from "axios";
 
 
 const filterBar = [
-  // { to: "/all", label: "All" },
-  // { to: "/account", label: "Account" },
-  // { to: "/streaming", label: "Streaming" },
-  // { to: "/games", label: "Games" },
-  // { to: "/vpn", label: "VPN" },
-  // { to: "/software", label: "Software" },
   { label: "All", endpoint: "getpack" },
   { label: "Pack", endpoint: "getpack" },
-  // { label: "Social", endpoint: "getsocial" },
-  // { label: "Games", endpoint: "getgames" },
-
 ];
 
 interface Item {
@@ -34,9 +25,6 @@ interface Item {
   exp: number;
   amount: number;
 }
-
-
-// console.log(import.meta.env.VITE_API_TOKEN);
 
 export default function Home() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>("getpack");
@@ -57,27 +45,14 @@ export default function Home() {
           },
         });
 
-        // localStorage.setItem('itemList', JSON.stringify(response.data));
-        // setItemList(response.data);
-
         const dataWithId = response.data.map((item: Item, index: number) => ({
           ...item,
-          id: index + 1, // เริ่มจาก 1
+          id: index + 1,
         }));
 
         localStorage.setItem('itemList', JSON.stringify(dataWithId));
 
         setItemList(dataWithId);
-
-        // if (selectedFilter === "favorite") {
-        //   const favoriteIds = localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')!) : [];
-        //   const filteredData = response.data.filter((item: any, idx: number) => favoriteIds.includes(idx));
-
-        //   setItemList(filteredData);
-        // } else {
-        //   setItemList(response.data);
-        // }
-        // console.log(response);
       };
       fetchData();
     } catch (error) {
@@ -86,12 +61,10 @@ export default function Home() {
   }, []);
 
   const handleFavorite = (item: Item) => {
-    // console.log("Favorite clicked");
   }
 
   return (
     <>
-      {/* <h1 className="text-3xl font-semibold text-center">Account Streaming</h1> */}
       <div className="pt-8">
         <div className="flex flex-wrap gap-3 justify-center">
           {filterBar.map((item, idx) => (
@@ -127,7 +100,6 @@ export default function Home() {
 
         <div className="pt-8">
           <CardItem itemData={itemList} searchQuery={searchQuery} />
-          {/* <CardItem selectedFilter={selectedFilter || ""} searchQuery={searchQuery} /> */}
         </div>
       </div>
     </>
