@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { GoSearch } from "react-icons/go";
 import CardItem from "../components/CardItem";
 import axios from "axios";
@@ -24,14 +24,13 @@ interface Item {
   price_agent: number;
   exp: number;
   amount: number;
+  id?: number;
 }
 
 export default function Home() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>("getpack");
   const [searchQuery, setSearchQuery] = useState("");
   const [itemList, setItemList] = useState<Item[]>([]);
-
-
 
   useEffect(() => {
     try {
@@ -59,6 +58,19 @@ export default function Home() {
       console.error("Error fetching data:", error);
     }
   }, []);
+
+  // Sort so items with stock (amount > 0) appear first, out-of-stock items at the bottom
+  const sortedItemList = useMemo(() => {
+    const items = [...itemList];
+    items.sort((a, b) => {
+      const aOut = (a.amount ?? 0) > 0 ? 0 : 1;
+      const bOut = (b.amount ?? 0) > 0 ? 0 : 1;
+      if (aOut !== bOut) return aOut - bOut;
+      // optional: secondary sort, e.g., by amount desc or keep original order
+      return (b.amount ?? 0) - (a.amount ?? 0);
+    });
+    return items;
+  }, [itemList]);
 
   const handleFavorite = (item: Item) => {
   }
@@ -99,7 +111,7 @@ export default function Home() {
         </div>
 
         <div className="pt-8">
-          <CardItem itemData={itemList} searchQuery={searchQuery} />
+          <CardItem itemData={sortedItemList} searchQuery={searchQuery} />
         </div>
       </div>
     </>

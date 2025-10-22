@@ -49,14 +49,14 @@ export default function About() {
           <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-2xl">
             👤
           </div>
-          <h3 className="font-bold text-xl text-white">Sitthisak Putthimit</h3>
+          <h3 className="font-bold text-xl text-white">Sittisak Putthimit</h3>
           </div>
           <div className="space-y-2 text-slate-300">
           <p className="flex items-center gap-2">
             <span className="text-cyan-400">📱</span> 0918429331
           </p>
           <p className="flex items-center gap-2 break-all">
-            <span className="text-cyan-400">✉️</span> sitthisak.putt@bumail.net
+            <span className="text-cyan-400">✉️</span> sittisak.putt@bumail.net
           </p>
           </div>
         </div>
