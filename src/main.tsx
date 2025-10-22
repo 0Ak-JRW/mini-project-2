@@ -17,7 +17,7 @@ const router = createBrowserRouter([
       // path ย่อยๆ ที่จะแสดงผลอยู่ภายใน App Component
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
-      { path: "product/:id", element: <Details /> },
+      { path: "product/:id", element: <Details  /> },
       { path: "Favorite", element: <Favorite /> },
       { path: "wheel", element: <Wheel /> },
     ],
